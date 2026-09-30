@@ -272,3 +272,8 @@ elif menu == "Customers":
                 customer_dialog(selected)
     else:
         st.info("No customers found.")
+        
+if st.sidebar.button("Fix Password"):
+    new_hash = generate_password_hash("admin")
+    supabase.table("users").update({"password_hash": new_hash}).eq("username", "admin").execute()
+    st.sidebar.success("Database fixed! You can now log in with admin / admin")
