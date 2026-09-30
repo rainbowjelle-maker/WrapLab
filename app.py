@@ -273,7 +273,10 @@ elif menu == "Customers":
     else:
         st.info("No customers found.")
         
-if st.sidebar.button("Fix Password"):
+if st.sidebar.button("Force Reset Admin"):
     new_hash = generate_password_hash("admin")
-    supabase.table("users").update({"password_hash": new_hash}).eq("username", "admin").execute()
-    st.sidebar.success("Database fixed! You can now log in with admin / admin")
+    # 1. Delete any corrupted admin account
+    supabase.table("users").delete().eq("username", "admin").execute()
+    # 2. Create a brand new admin account
+    supabase.table("users").insert({"username": "admin", "password_hash": new_hash}).execute()
+    st.sidebar.success("Fresh admin created! You can now log in with admin / admin")
